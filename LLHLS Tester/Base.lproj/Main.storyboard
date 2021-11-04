@@ -1,24 +1,116 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                    </view>
-                </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="LLHLS_Tester" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="URL" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cqz-pX-nWb">
+                                <rect key="frame" x="20" y="112" width="374" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UMz-oZ-rWU">
+                                <rect key="frame" x="0.0" y="191.5" width="414" height="670.5"/>
+                                <color key="backgroundColor" systemColor="labelColor"/>
+                            </view>
+                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NUx-P2-fsJ">
+                                <rect key="frame" x="20" y="44" width="374" height="48"/>
+                                <subviews>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="URL" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="soj-fx-y5R">
+                                        <rect key="frame" x="0.0" y="0.0" width="304" height="48"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bb5-uU-AjD">
+                                        <rect key="frame" x="304" y="0.0" width="70" height="48"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="70" id="zBf-rN-cyz"/>
+                                        </constraints>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="Set URL"/>
+                                        <connections>
+                                            <action selector="setURL:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3No-rf-3R3"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7Qi-8w-rJh">
+                                <rect key="frame" x="0.0" y="147.5" width="414" height="44"/>
+                                <items>
+                                    <barButtonItem systemItem="play" id="N71-Oq-pLy">
+                                        <connections>
+                                            <action selector="playPress:" destination="BYZ-38-t0r" id="Q5u-NR-kgn"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem width="42" style="plain" systemItem="fixedSpace" id="peC-2i-MYD"/>
+                                    <barButtonItem systemItem="pause" id="30V-Uk-rsI">
+                                        <connections>
+                                            <action selector="pausePress:" destination="BYZ-38-t0r" id="9X0-ba-O2t"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem width="42" style="plain" systemItem="fixedSpace" id="Udg-PE-Bjg"/>
+                                    <barButtonItem title="Stop" id="Jt8-27-JjU">
+                                        <connections>
+                                            <action selector="stopPress:" destination="BYZ-38-t0r" id="Hpc-9Z-sqn"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem width="42" style="plain" systemItem="fixedSpace" id="khD-rL-Gbr"/>
+                                    <barButtonItem title="Live" id="SC2-X3-JoP">
+                                        <connections>
+                                            <action selector="livePress:" destination="BYZ-38-t0r" id="oQU-me-gmf"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="cqz-pX-nWb" secondAttribute="trailing" constant="20" id="8oC-wN-ZHc"/>
+                            <constraint firstItem="7Qi-8w-rJh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="9l9-dm-ThH"/>
+                            <constraint firstItem="7Qi-8w-rJh" firstAttribute="top" secondItem="cqz-pX-nWb" secondAttribute="bottom" constant="15" id="AeC-Ci-NUR"/>
+                            <constraint firstItem="cqz-pX-nWb" firstAttribute="top" secondItem="NUx-P2-fsJ" secondAttribute="bottom" constant="20" id="OSe-lg-IMb"/>
+                            <constraint firstItem="7Qi-8w-rJh" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="QQY-0c-VF2"/>
+                            <constraint firstItem="cqz-pX-nWb" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="Wph-FD-Hx0"/>
+                            <constraint firstItem="NUx-P2-fsJ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="X3G-ge-Utl"/>
+                            <constraint firstItem="UMz-oZ-rWU" firstAttribute="top" secondItem="7Qi-8w-rJh" secondAttribute="bottom" id="hT0-fD-U2D"/>
+                            <constraint firstItem="UMz-oZ-rWU" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="oIb-4u-6Je"/>
+                            <constraint firstItem="UMz-oZ-rWU" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="oyD-xM-z97"/>
+                            <constraint firstItem="NUx-P2-fsJ" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="44" id="r4N-fe-vjx"/>
+                            <constraint firstItem="UMz-oZ-rWU" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="tD8-Va-wjD"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="NUx-P2-fsJ" secondAttribute="trailing" constant="20" id="tUL-Gg-nBl"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="playerContainer" destination="UMz-oZ-rWU" id="8zw-at-4lk"/>
+                        <outlet property="urlLabel" destination="cqz-pX-nWb" id="5Fs-oj-a86"/>
+                        <outlet property="urlTextField" destination="soj-fx-y5R" id="00g-BA-zhp"/>
+                    </connections>
+                </viewController>
             </objects>
+            <point key="canvasLocation" x="18.840579710144929" y="69.642857142857139"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>

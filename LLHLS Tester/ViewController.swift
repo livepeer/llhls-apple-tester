@@ -75,6 +75,15 @@ class ViewController: UIViewController {
         playerLayer = AVPlayerLayer(player: player)
         playerLayer!.masksToBounds = true
         playerContainer.layer.addSublayer(playerLayer!)
+        
+        // Add observer for AVPlayer status and AVPlayerItem status
+        self.player.addObserver(self, forKeyPath: #keyPath(AVPlayer.status), options: [.new, .initial], context: nil)
+        self.player.addObserver(self, forKeyPath: #keyPath(AVPlayer.currentItem.status), options:[.new, .initial], context: nil)
+
+        // Watch notifications
+        let center = NotificationCenter.default
+        center.addObserver(self, selector:#selector(self.newErrorLogEntry(_:)), name: .AVPlayerItemNewErrorLogEntry, object: player.currentItem)
+        center.addObserver(self, selector:#selector(self.failedToPlayToEndTime(_:)), name: .AVPlayerItemFailedToPlayToEndTime, object: player.currentItem)
     }
     
     override func viewDidLayoutSubviews() {
@@ -82,6 +91,37 @@ class ViewController: UIViewController {
         // This keeps the AVPlayerLayer the size of the container at all times
         playerLayer?.frame = CGRect(x: 0.0, y: 0.0, width: playerContainer.frame.width, height: playerContainer.frame.height)
     }
+    
+    // Observe If AVPlayerItem.status Changed to Fail
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
+        if object as? AVPlayer != nil, keyPath == #keyPath(AVPlayer.currentItem.status){
+            let newStatus: AVPlayerItem.Status
+            if let newStatusAsNumber = change?[NSKeyValueChangeKey.newKey] as? NSNumber {
+                newStatus = AVPlayerItem.Status(rawValue: newStatusAsNumber.intValue)!
+            } else {
+                newStatus = .unknown
+            }
+            if newStatus == .failed {
+                NSLog("Error: \(String(describing: self.player.currentItem?.error?.localizedDescription)), error: \(String(describing: self.player.currentItem?.error))")
+            }
+        }
+    }
 
+    // Getting error from Notification payload
+    @objc func newErrorLogEntry(_ notification: Notification) {
+        guard let object = notification.object, let playerItem = object as? AVPlayerItem else {
+            return
+        }
+        guard let errorLog: AVPlayerItemErrorLog = playerItem.errorLog() else {
+            return
+        }
+        NSLog("Error: \(errorLog)")
+    }
+
+    @objc func failedToPlayToEndTime(_ notification: Notification) {
+        if let error = notification.userInfo!["AVPlayerItemFailedToPlayToEndTimeErrorKey"] as? Error {
+            print("Error: \(error.localizedDescription), error: \(error)")
+        }
+    }
 }
 

@@ -27,6 +27,7 @@ class ViewController: UIViewController {
         }
         urlLabel.text = urlText
         userDefaults.set(urlText, forKey: urlKey)
+        setPlayerItem()
     }
     
     // View to hold the AVPlayerLayer
@@ -40,11 +41,9 @@ class ViewController: UIViewController {
     }
     
     @IBAction func playPress(_ sender: Any) {
-        guard let urlString = urlLabel.text, let url = URL(string: urlString) else{
-            return
+        if player.currentItem == nil {
+            setPlayerItem()
         }
-        let playerItem = AVPlayerItem(url: url)
-        player.replaceCurrentItem(with: playerItem)
         player.play()
     }
     
@@ -56,6 +55,15 @@ class ViewController: UIViewController {
     @IBAction func livePress(_ sender: Any) {
         // This seeks to the very end of the stream if a user has paused
         player.seek(to: CMTimeMakeWithSeconds(Float64(MAXFLOAT), preferredTimescale: Int32(NSEC_PER_SEC)))
+    }
+    
+    private func setPlayerItem(){
+        // Only reset the player item if it is already nil so pause can be tested
+        guard let urlString = urlLabel.text, let url = URL(string: urlString) else{
+            return
+        }
+        let playerItem = AVPlayerItem(url: url)
+        player.replaceCurrentItem(with: playerItem)
     }
     
     override func viewDidLoad() {

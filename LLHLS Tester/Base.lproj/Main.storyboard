@@ -3,6 +3,7 @@
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -11,7 +12,6 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="LLHLS_Tester" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
@@ -24,8 +24,11 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="UMz-oZ-rWU">
-                                <rect key="frame" x="0.0" y="191.5" width="414" height="670.5"/>
+                                <rect key="frame" x="0.0" y="191.5" width="414" height="219"/>
                                 <color key="backgroundColor" systemColor="labelColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="UMz-oZ-rWU" secondAttribute="height" multiplier="138:73" id="mvt-lW-uDl"/>
+                                </constraints>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NUx-P2-fsJ">
                                 <rect key="frame" x="20" y="44" width="374" height="48"/>
@@ -76,19 +79,41 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="pTn-DN-QzV">
+                                <rect key="frame" x="0.0" y="410.5" width="414" height="451.5"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="sectionIndexBackgroundColor" name="AccentColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="reuseId" id="USj-V4-Yam">
+                                        <rect key="frame" x="0.0" y="44.5" width="414" height="43.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="USj-V4-Yam" id="rVe-O6-0a3">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="Kmw-dA-hJO"/>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="gwR-aP-NZr"/>
+                                </connections>
+                            </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="pTn-DN-QzV" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="5ht-tw-AQM"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="cqz-pX-nWb" secondAttribute="trailing" constant="20" id="8oC-wN-ZHc"/>
                             <constraint firstItem="7Qi-8w-rJh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="9l9-dm-ThH"/>
                             <constraint firstItem="7Qi-8w-rJh" firstAttribute="top" secondItem="cqz-pX-nWb" secondAttribute="bottom" constant="15" id="AeC-Ci-NUR"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="pTn-DN-QzV" secondAttribute="bottom" id="JP0-bM-I1G"/>
                             <constraint firstItem="cqz-pX-nWb" firstAttribute="top" secondItem="NUx-P2-fsJ" secondAttribute="bottom" constant="20" id="OSe-lg-IMb"/>
                             <constraint firstItem="7Qi-8w-rJh" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="QQY-0c-VF2"/>
+                            <constraint firstItem="pTn-DN-QzV" firstAttribute="top" secondItem="UMz-oZ-rWU" secondAttribute="bottom" id="T1x-7F-RJw"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="pTn-DN-QzV" secondAttribute="trailing" id="TQt-Cz-cVO"/>
                             <constraint firstItem="cqz-pX-nWb" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="Wph-FD-Hx0"/>
                             <constraint firstItem="NUx-P2-fsJ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="X3G-ge-Utl"/>
                             <constraint firstItem="UMz-oZ-rWU" firstAttribute="top" secondItem="7Qi-8w-rJh" secondAttribute="bottom" id="hT0-fD-U2D"/>
-                            <constraint firstItem="UMz-oZ-rWU" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="oIb-4u-6Je"/>
                             <constraint firstItem="UMz-oZ-rWU" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="oyD-xM-z97"/>
                             <constraint firstItem="NUx-P2-fsJ" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" constant="44" id="r4N-fe-vjx"/>
                             <constraint firstItem="UMz-oZ-rWU" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="tD8-Va-wjD"/>
@@ -97,15 +122,20 @@
                     </view>
                     <connections>
                         <outlet property="playerContainer" destination="UMz-oZ-rWU" id="8zw-at-4lk"/>
+                        <outlet property="tableView" destination="pTn-DN-QzV" id="EdG-z6-9cH"/>
                         <outlet property="urlLabel" destination="cqz-pX-nWb" id="5Fs-oj-a86"/>
                         <outlet property="urlTextField" destination="soj-fx-y5R" id="00g-BA-zhp"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="18.840579710144929" y="69.642857142857139"/>
         </scene>
     </scenes>
     <resources>
+        <namedColor name="AccentColor">
+            <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

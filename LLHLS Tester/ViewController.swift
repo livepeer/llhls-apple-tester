@@ -62,13 +62,18 @@ class ViewController: UIViewController {
     
     @IBAction func livePress(_ sender: Any) {
         // This seeks to the very end of the stream if a user has paused
-        player.seek(to: CMTimeMakeWithSeconds(Float64(MAXFLOAT), preferredTimescale: Int32(NSEC_PER_SEC)))
-        addActionEvent(action: "Live")
+        guard let livePosition = player.currentItem?.seekableTimeRanges.last as? CMTimeRange else {
+            addErrorEvent(error: "Live Seek Failed")
+            return
+        }
+        addActionEvent(action: "Live Seek")
+        player.seek(to:CMTimeRangeGetEnd(livePosition))
     }
     
     private func setPlayerItem(){
         // Only reset the player item if it is already nil so pause can be tested
         guard let urlString = urlLabel.text, let url = URL(string: urlString) else{
+            addErrorEvent(error: "Player Item Set Failed")
             return
         }
         let playerItem = AVPlayerItem(url: url)
@@ -189,6 +194,17 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         }
         // Return empty cell.
         return UITableViewCell()
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let alertController = UIAlertController(title: "Log", message: self.events[indexPath.row], preferredStyle: .alert)
+        //Create and add the Cancel action
+        let cancelAction: UIAlertAction = UIAlertAction(title: "Close", style: .cancel) { action -> Void in
+          //Just dismiss the action sheet
+            self.tableView.deselectRow(at: indexPath, animated: true)
+        }
+        alertController.addAction(cancelAction)
+        self.present(alertController, animated: true, completion: nil)
     }
 }
 

@@ -10,9 +10,13 @@ import AVKit
 
 // Static Key for accessing the last set URL
 let urlKey = "urlKey"
+let endPoint = "https://webhook.site/367d6463-109c-46df-867e-25f851461a8a"
 
 class ViewController: UIViewController {
-
+    
+    // This unique identifier will be generated each time the app view is loaded
+    var uuid = ""
+    
     @IBOutlet weak var urlTextField: UITextField!
     @IBOutlet weak var urlLabel: UILabel!
     
@@ -31,7 +35,7 @@ class ViewController: UIViewController {
         }
         urlLabel.text = urlText
         userDefaults.set(urlText, forKey: urlKey)
-        addActionEvent(action: "Set URL \(urlText)")
+        addEvent(event: "Set Url", description: urlText)
         setPlayerItem()
     }
     
@@ -43,7 +47,7 @@ class ViewController: UIViewController {
 
     @IBAction func pausePress(_ sender: Any) {
         player.pause()
-        addActionEvent(action: "Pause")
+        addEvent(event: "Pause")
     }
     
     @IBAction func playPress(_ sender: Any) {
@@ -51,34 +55,34 @@ class ViewController: UIViewController {
             setPlayerItem()
         }
         player.play()
-        addActionEvent(action: "Play")
+        addEvent(event: "Play")
     }
     
     @IBAction func stopPress(_ sender: Any) {
         // There is no stop functionality so instead I am destroying the asset in the player
         player.replaceCurrentItem(with: nil)
-        addActionEvent(action: "Stop")
+        addEvent(event: "Stop")
     }
     
     @IBAction func livePress(_ sender: Any) {
         // This seeks to the very end of the stream if a user has paused
         guard let livePosition = player.currentItem?.seekableTimeRanges.last as? CMTimeRange else {
-            addErrorEvent(error: "Live Seek Failed")
+            addEvent(event: "Error", description: "Live Seek Failed")
             return
         }
-        addActionEvent(action: "Live Seek")
+        addEvent(event: "Live Seek")
         player.seek(to:CMTimeRangeGetEnd(livePosition))
     }
     
     private func setPlayerItem(){
         // Only reset the player item if it is already nil so pause can be tested
         guard let urlString = urlLabel.text, let url = URL(string: urlString) else{
-            addErrorEvent(error: "Player Item Set Failed")
+            addEvent(event: "Error", description: "Player Item Set Failed")
             return
         }
         let playerItem = AVPlayerItem(url: url)
         player.replaceCurrentItem(with: playerItem)
-        addActionEvent(action: "Player Item Set")
+        addEvent(event: "Player Item Set")
     }
     
     override func viewDidLoad() {
@@ -95,10 +99,13 @@ class ViewController: UIViewController {
         self.player.addObserver(self, forKeyPath: #keyPath(AVPlayer.status), options: [.new, .initial], context: nil)
         self.player.addObserver(self, forKeyPath: #keyPath(AVPlayer.currentItem.status), options:[.new, .initial], context: nil)
 
-        // Watch notifications
+        // Player notifications
         let center = NotificationCenter.default
         center.addObserver(self, selector:#selector(self.newErrorLogEntry(_:)), name: .AVPlayerItemNewErrorLogEntry, object: player.currentItem)
         center.addObserver(self, selector:#selector(self.failedToPlayToEndTime(_:)), name: .AVPlayerItemFailedToPlayToEndTime, object: player.currentItem)
+        
+        // Generate uuid
+        uuid = UUID().uuidString
     }
     
     override func viewDidLayoutSubviews() {
@@ -120,7 +127,7 @@ class ViewController: UIViewController {
                 guard let localizedError = self.player.currentItem?.error?.localizedDescription else {
                     return
                 }
-                addErrorEvent(error: localizedError)
+                addEvent(event: "Error", description:localizedError)
             }
         }
     }
@@ -138,41 +145,57 @@ class ViewController: UIViewController {
         guard let localizedError = self.player.currentItem?.error?.localizedDescription else {
             return
         }
-        addErrorEvent(error: localizedError)
+        addEvent(event: "Error", description:localizedError)
     }
 
     @objc func failedToPlayToEndTime(_ notification: Notification) {
         if let error = notification.userInfo!["AVPlayerItemFailedToPlayToEndTimeErrorKey"] as? Error {
-            addErrorEvent(error: error.localizedDescription)
+            addEvent(event: "Error", description: error.localizedDescription)
         }
     }
     
-    private func addActionEvent(action: String){
-        let actionStr = "Action: \(action)"
-        addEvent(event: actionStr)
-    }
-    
-    private func addErrorEvent(error: String){
-        let errorStr = "Error: \(error)"
-        addEvent(event: errorStr)
-    }
-    
-    private func addEvent(event: String) {
+    private func addEvent(event: String, description: String = "") {
         // Format the timestamp
         let now = Date()
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone.current
         formatter.dateFormat = "MM/dd/yy HH:mm:ss"
         let dateString = formatter.string(from: now)
-        let eventString = "\(dateString) \(event)"
+        
+        // Print the event string
+        let eventString = "\(dateString): \(event) \(description)"
         print(event)
         
         // Dispatch to the main thread to prevent a race case
         DispatchQueue.main.async{
+            // Update the table view and data
             self.events.append(eventString)
             self.tableView.reloadData()
         }
         
+        // Report the event to the backend
+        let json: [String: Any] = ["sessionID": uuid, "event": event, "description": description, "timeStamp": dateString]
+        let jsonData = try? JSONSerialization.data(withJSONObject: json)
+
+        // Create post request
+        let url = URL(string: endPoint)!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+
+        // Insert json data to the request
+        request.httpBody = jsonData
+
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, error == nil else {
+                print(error?.localizedDescription ?? "No data")
+                return
+            }
+            let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
+            if let responseJSON = responseJSON as? [String: Any] {
+                print(responseJSON)
+            }
+        }
+        task.resume()
     }
 }
 

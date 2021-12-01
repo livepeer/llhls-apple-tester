@@ -10,7 +10,12 @@ import AVKit
 
 // Static Key for accessing the last set URL
 let urlKey = "urlKey"
-let endPoint = "https://webhook.site/367d6463-109c-46df-867e-25f851461a8a"
+
+// The endpoint for logging all events (actions and errors)
+// let endPoint = "https://webhook.site/367d6463-109c-46df-867e-25f851461a8a"
+
+// The testing URL to monitor for actions
+let testingURLString = "https://production.llhls-tester-backend.livepeer.workers.dev/"
 
 class ViewController: UIViewController {
     
@@ -29,7 +34,13 @@ class ViewController: UIViewController {
     
     var events = [String]()
     
+    var endPoint = ""
+    
     @IBAction func setURL(_ sender: Any) {
+        setURL()
+    }
+    
+    private func setURL(){
         guard let urlText = urlTextField.text else {
             return
         }
@@ -106,6 +117,9 @@ class ViewController: UIViewController {
         
         // Generate uuid
         uuid = UUID().uuidString
+        
+        // Check testing url
+        checkTestingURL()
     }
     
     override func viewDidLayoutSubviews() {
@@ -159,7 +173,7 @@ class ViewController: UIViewController {
         let now = Date()
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone.current
-        formatter.dateFormat = "MM/dd/yy HH:mm:ss"
+        formatter.dateFormat = "MM/dd/yyyy HH:mm:ss"
         let dateString = formatter.string(from: now)
         
         // Print the event string
@@ -197,6 +211,51 @@ class ViewController: UIViewController {
         }
         task.resume()
     }
+    
+    @objc func checkTestingURL(){
+        URLSession.shared.dataTask(with: URL(string: testingURLString)!) { (data, response, error) -> Void in
+            // Check if data was received successfully
+            if error == nil && data != nil {
+                do {
+                    // Convert to dictionary where keys are of type String, and values are of any type
+                    let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as! [String: Any]
+                    print(json)
+                    
+                    if let jobs = json["jobs"] as? [[String:Any]] {
+                        for job in jobs {
+                            if var actionTime = job["startAt"] as? TimeInterval {
+                                actionTime -= Date.now.timeIntervalSince1970
+                                _ = Timer.scheduledTimer(withTimeInterval: actionTime, repeats: false, block: { _ in
+                                    if let endPoint = job["reportingUrl"] as? String {
+                                        self.endPoint = endPoint
+                                    }
+
+                                    if let url = job["url"] as? String {
+                                        if url != self.urlTextField.text {
+                                            DispatchQueue.main.async{
+                                                self.urlTextField.text = url
+                                                self.setURL()
+                                            }
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    }
+                    
+                    guard var nextCheckTime = json["checkAgainAt"] as? TimeInterval else {
+                        return
+                    }
+                    nextCheckTime -= Date.now.timeIntervalSince1970
+                    
+                    _ = Timer.scheduledTimer(timeInterval: nextCheckTime, target: self, selector: #selector(self.checkTestingURL), userInfo: nil, repeats: false)
+                    
+                } catch {
+                    // Something went wrong
+                }
+            }
+        }.resume()
+    }
 }
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
@@ -230,4 +289,3 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         self.present(alertController, animated: true, completion: nil)
     }
 }
-
